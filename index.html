@@ -52,55 +52,55 @@
         <!-- FILMLAR -->
         <div class="item card" data-type="movie" onclick="watchItem('1000')">
             <div class="info"><span class="title">Oilaviy Qasos</span><span class="badge">Film</span></div>
-            <span class="code">▶ Ko‘rish (1000)</span>
+            <span class="code">📋 Kod: 1000</span>
         </div>
         <div class="item card" data-type="movie" onclick="watchItem('999')">
             <div class="info"><span class="title">Jang ortidan jang (2025)</span><span class="badge">Film</span></div>
-            <span class="code">▶ Ko‘rish (999)</span>
+            <span class="code">📋 Kod: 999</span>
         </div>
         <div class="item card" data-type="movie" onclick="watchItem('998')">
             <div class="info"><span class="title">Xanter killer</span><span class="badge">Film</span></div>
-            <span class="code">▶ Ko‘rish (998)</span>
+            <span class="code">📋 Kod: 998</span>
         </div>
         <div class="item card" data-type="movie" onclick="watchItem('997')">
             <div class="info"><span class="title">Yirtqich yuragi</span><span class="badge">Film</span></div>
-            <span class="code">▶ Ko‘rish (997)</span>
+            <span class="code">📋 Kod: 997</span>
         </div>
         <div class="item card" data-type="movie" onclick="watchItem('996')">
             <div class="info"><span class="title">Muzyorar (2013)</span><span class="badge">Film</span></div>
-            <span class="code">▶ Ko‘rish (996)</span>
+            <span class="code">📋 Kod: 996</span>
         </div>
         <div class="item card" data-type="movie" onclick="watchItem('995')">
             <div class="info"><span class="title">Ong osti kuchlar</span><span class="badge">Film</span></div>
-            <span class="code">▶ Ko‘rish (995)</span>
+            <span class="code">📋 Kod: 995</span>
         </div>
         <div class="item card" data-type="movie" onclick="watchItem('994')">
             <div class="info"><span class="title">Gemini Man</span><span class="badge">Film</span></div>
-            <span class="code">▶ Ko‘rish (994)</span>
+            <span class="code">📋 Kod: 994</span>
         </div>
         <div class="item card" data-type="movie" onclick="watchItem('993')">
             <div class="info"><span class="title">Xotira kundaligi (2021)</span><span class="badge">Film</span></div>
-            <span class="code">▶ Ko‘rish (993)</span>
+            <span class="code">📋 Kod: 993</span>
         </div>
         <div class="item card" data-type="movie" onclick="watchItem('992')">
             <div class="info"><span class="title">Yulduzlar aybdormi (2014)</span><span class="badge">Film</span></div>
-            <span class="code">▶ Ko‘rish (992)</span>
+            <span class="code">📋 Kod: 992</span>
         </div>
         <div class="item card" data-type="movie" onclick="watchItem('991')">
             <div class="info"><span class="title">Muqaddas zamin (2005)</span><span class="badge">Film</span></div>
-            <span class="code">▶ Ko‘rish (991)</span>
+            <span class="code">📋 Kod: 991</span>
         </div>
         <div class="item card" data-type="movie" onclick="watchItem('881')">
             <div class="info"><span class="title">Zulmat bo‘risi</span><span class="badge">Film</span></div>
-            <span class="code">▶ Ko‘rish (881)</span>
+            <span class="code">📋 Kod: 881</span>
         </div>
         <div class="item card" data-type="movie" onclick="watchItem('878')">
             <div class="info"><span class="title">Burgut / Eagle (2024)</span><span class="badge">Film</span></div>
-            <span class="code">▶ Ko‘rish (878)</span>
+            <span class="code">📋 Kod: 878</span>
         </div>
         <div class="item card" data-type="movie" onclick="watchItem('874')">
             <div class="info"><span class="title">Zauyre (2024)</span><span class="badge">Film</span></div>
-            <span class="code">▶ Ko‘rish (874)</span>
+            <span class="code">📋 Kod: 874</span>
         </div>
     </div>
 
@@ -137,16 +137,37 @@
             }
         }
 
-        function watchItem(code) {
-            const botUrl = "https://t.me/Filmorabot_bot?start=" + code;
-            if (tg.openTelegramLink) {
-                tg.openTelegramLink(botUrl);
-                tg.close();
+        function copyText(text) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
             } else {
-                window.location.href = botUrl;
+                fallbackCopy(text);
+            }
+        }
+
+        function fallbackCopy(text) {
+            let textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try { document.execCommand('copy'); } catch (err) {}
+            document.body.removeChild(textArea);
+        }
+
+        function watchItem(code) {
+            copyText(code);
+            if (tg.showAlert) {
+                tg.showAlert("✅ Kino kodi nusxalandi: " + code + "\n\nEndi bot chatiga kirib, xabar yozish joyiga joylashtiring (Paste) va yuboring!", function() {
+                    tg.close();
+                });
+            } else {
+                alert("✅ Kino kodi nusxalandi: " + code + "\n\nEndi bot chatiga kirib joylashtiring (Paste) va yuboring!");
+                tg.close();
             }
         }
     </script>
 </body>
-    </html>
-    
+</html>
