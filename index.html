@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filmora Kinolar</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: sans-serif; background: #121212; color: #fff; margin: 0; padding: 15px; }
+        input { width: 100%; padding: 12px; border-radius: 8px; border: none; margin-bottom: 15px; box-sizing: border-box; font-size: 16px; outline: none; }
+        .card { background: #1e1e1e; padding: 14px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s; }
+        .card:active { background: #2c2c2c; }
+        .code { background: #e50914; padding: 5px 10px; border-radius: 6px; font-weight: bold; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <h2>🎬 Filmora Kinolar Katalogi</h2>
+    <input type="text" id="search" placeholder="Kino nomi yoki kodi bo‘yicha qidirish..." onkeyup="filterMovies()">
+    
+    <div id="movie-list">
+        <div class="card" onclick="selectMovie('999')"><span>Jang ortidan jang (2025)</span> <span class="code">Kod: 999</span></div>
+        <div class="card" onclick="selectMovie('996')"><span>Muzyorar / Snowpiercer (2013)</span> <span class="code">Kod: 996</span></div>
+        <div class="card" onclick="selectMovie('992')"><span>Yulduzlar aybdor (2014)</span> <span class="code">Kod: 992</span></div>
+        <div class="card" onclick="selectMovie('991')"><span>Muqaddas zamin (2005)</span> <span class="code">Kod: 991</span></div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        function filterMovies() {
+            let input = document.getElementById('search').value.toLowerCase();
+            let cards = document.getElementsByClassName('card');
+            for (let card of cards) {
+                card.style.display = card.innerText.toLowerCase().includes(input) ? "flex" : "none";
+            }
+        }
+
+        function selectMovie(code) {
+            if (tg.initData) {
+                tg.sendData(code);
+            } else {
+                navigator.clipboard.writeText(code);
+                alert("Kino kodi nusxalandi: " + code);
+            }
+        }
+    </script>
+</body>
+</html>
