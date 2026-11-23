@@ -411,9 +411,13 @@
         USTATE.progress[code] = ep;
         localStorage.setItem("filmora_user", JSON.stringify(USTATE));
         renderContinue();
-        setTimeout(() => {
-          tg.openTelegramLink("https://t.me/Filmorabot_bot");
-        }, 500);
+                setTimeout(() => {
+            tg.openTelegramLink(`https://t.me/Filmorabot_bot?start=watch_${code}`);
+            setTimeout(() => {
+                tg.close();
+            }, 150);
+        }, 120);
+        
       } else if (data.error === "not_subscribed") {
         tg.showAlert("Avval kanallarga obuna bo‘ling!");
         tg.openTelegramLink("https://t.me/Filmorabot_bot");
