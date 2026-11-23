@@ -421,7 +421,7 @@
         tg.showAlert("Bu VIP kontent! Botdan VIP oling.");
         tg.openTelegramLink("https://t.me/Filmorabot_bot");
       }
-      
+        }
 
     async function toggleFav(code) {
       const res = await fetch(`${SERVER_URL}/api/fav`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ user_id: USER_ID, code }) });
