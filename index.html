@@ -109,7 +109,6 @@
     <button class="search-trigger" onclick="openSearch()">🔍</button>
   </div>
 
-  <!-- 1. ASOSIY -->
   <div class="page active" id="page-home">
     <div id="heroWrap"></div>
     <div class="dots" id="heroDots"></div>
@@ -121,7 +120,6 @@
     <div class="grid3" id="newGrid"></div>
   </div>
 
-  <!-- 2. KATALOG -->
   <div class="page" id="page-catalog">
     <h2 style="font-size:22px;margin-bottom:12px;">Kinolar</h2>
     <div class="seg-row">
@@ -140,7 +138,6 @@
     <div class="grid3" id="catGrid"></div>
   </div>
 
-  <!-- 3. SERIALLAR -->
   <div class="page" id="page-series">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
       <div>
@@ -155,7 +152,6 @@
     <div class="grid3" id="serGrid"></div>
   </div>
 
-  <!-- 4. SARALANGANLAR -->
   <div class="page" id="page-favs">
     <h2 style="font-size:22px;margin-bottom:12px;">Saralanganlar</h2>
     <div class="seg" style="margin-bottom:14px;width:fit-content;">
@@ -166,7 +162,6 @@
     <div class="grid3" id="favGrid"></div>
   </div>
 
-  <!-- 5. PROFIL -->
   <div class="page" id="page-profile">
     <h2 style="font-size:22px;margin-bottom:12px;">Profil</h2>
     <div class="prof-card">
@@ -197,10 +192,8 @@
     <div id="histList"></div>
   </div>
 
-  <!-- DETAIL OVERLAY -->
   <div class="detail-overlay" id="detailView"></div>
 
-  <!-- SEARCH OVERLAY -->
   <div class="search-overlay" id="searchView">
     <div class="sbar">
       <input type="text" id="searchInp" placeholder="🔍 Kino, serial nomi yoki kodi..." oninput="renderSearch()" />
@@ -217,9 +210,8 @@
     <button class="nbtn" id="nav-series" onclick="switchTab('series')"><span>📺</span><span>Seriallar</span></button>
     <button class="nbtn" id="nav-favs" onclick="switchTab('favs')"><span>❤️</span><span>Saralangan</span></button>
     <button class="nbtn" id="nav-profile" onclick="switchTab('profile')"><span>👤</span><span>Profil</span></button>
-  </nav>
-
-  <script>
+                          </nav>
+        <script>
     const tg = window.Telegram.WebApp;
     tg.expand(); tg.ready();
     const SERVER_URL = "https://filmora-server.onrender.com";
@@ -253,14 +245,8 @@
     }
 
     function renderAll() {
-      renderHero();
-      renderHomeGenres();
-      renderContinue();
-      renderHomeGrids();
-      renderCatalogPage();
-      renderSeriesPage();
-      renderFavsPage();
-      renderProfilePage();
+      renderHero(); renderHomeGenres(); renderContinue(); renderHomeGrids();
+      renderCatalogPage(); renderSeriesPage(); renderFavsPage(); renderProfilePage();
     }
 
     function renderHero() {
@@ -269,19 +255,7 @@
       const dots = document.getElementById("heroDots");
       if (!list.length) { wrap.innerHTML = `<div class="hero"><div class="hero-inner"><div><h3>Hozircha kinolar yo‘q</h3></div></div></div>`; return; }
       const m = list[heroIdx % list.length];
-      wrap.innerHTML = `
-        <div class="hero" onclick="openDetail('${m.code}')">
-          <img class="hero-bg" src="${m.poster}" />
-          <div class="hero-inner">
-            <div class="hero-left">
-              <div class="hero-tag">🔥 YANGI</div>
-              <div class="hero-title">${m.title}</div>
-              <div class="hero-meta">${m.year} • ${m.genre}</div>
-              <button class="hero-btn">▶ Batafsil</button>
-            </div>
-            <img class="hero-poster" src="${m.poster}" />
-          </div>
-        </div>`;
+      wrap.innerHTML = `<div class="hero" onclick="openDetail('${m.code}')"><img class="hero-bg" src="${m.poster}" /><div class="hero-inner"><div class="hero-left"><div class="hero-tag">🔥 YANGI</div><div class="hero-title">${m.title}</div><div class="hero-meta">${m.year} • ${m.genre}</div><button class="hero-btn">▶ Batafsil</button></div><img class="hero-poster" src="${m.poster}" /></div></div>`;
       dots.innerHTML = list.map((_, i) => `<div class="dot ${i === (heroIdx % list.length) ? 'active' : ''}"></div>`).join("");
     }
 
@@ -292,43 +266,24 @@
     }
 
     function renderHomeGenres() {
-      const gs = getGenres(ITEMS);
-      document.getElementById("homeGenres").innerHTML = gs.map(g => `<button class="chip ${homeGenre === g ? 'active' : ''}" onclick="homeGenre='${g}';renderHomeGenres();renderHomeGrids();">${g}</button>`).join("");
+      document.getElementById("homeGenres").innerHTML = getGenres(ITEMS).map(g => `<button class="chip ${homeGenre === g ? 'active' : ''}" onclick="homeGenre='${g}';renderHomeGenres();renderHomeGrids();">${g}</button>`).join("");
     }
 
     function renderContinue() {
       const sec = document.getElementById("continueSec");
       const entries = Object.entries(USTATE.progress || {}).map(([c, ep]) => ({ item: ITEMS.find(x => x.code === c), ep })).filter(x => x.item);
       if (!entries.length) { sec.innerHTML = ""; return; }
-      sec.innerHTML = `
-        <div class="sec-head"><div class="sec-title">▶ Davom ettirish</div></div>
-        <div class="cont-row">${entries.map(({ item, ep }) => `
-          <div class="cont-card" onclick="openDetail('${item.code}')">
-            <div class="cont-thumb"><img src="${item.poster}" /><div class="play-circle">▶</div></div>
-            <div class="cont-name">${item.title}</div>
-            <div class="cont-sub">▶ ${ep}-qism • ${ep}/${item.ep_count}</div>
-          </div>`).join("")}
-        </div>`;
+      sec.innerHTML = `<div class="sec-head"><div class="sec-title">▶ Davom ettirish</div></div><div class="cont-row">${entries.map(({ item, ep }) => `<div class="cont-card" onclick="openDetail('${item.code}')"><div class="cont-thumb"><img src="${item.poster}" /><div class="play-circle">▶</div></div><div class="cont-name">${item.title}</div><div class="cont-sub">▶ ${ep}-qism • ${ep}/${item.ep_count}</div></div>`).join("")}</div>`;
     }
 
     function cardHTML(m, isSeries = false) {
-      return `
-        <div class="mcard" onclick="openDetail('${m.code}')">
-          <div class="mposter">
-            <img src="${m.poster}" loading="lazy" />
-            ${isSeries ? `<div class="mbadge-l">Serial</div><div class="mbadge-r">${m.ep_count} qism</div>` : `${m.premium ? `<div class="mbadge-r" style="background:#f59e0b;color:#000;">VIP</div>` : ``}${m.rating ? `<div class="mrate">⭐ ${m.rating}</div>` : ``}`}
-          </div>
-          <div class="mtitle">${m.title}</div>
-          <div class="mmeta">${isSeries ? m.country : `${m.year} • ${(m.genre || '').split(',')[0]}`}</div>
-        </div>`;
+      return `<div class="mcard" onclick="openDetail('${m.code}')"><div class="mposter"><img src="${m.poster}" loading="lazy" />${isSeries ? `<div class="mbadge-l">Serial</div><div class="mbadge-r">${m.ep_count} qism</div>` : `${m.premium ? `<div class="mbadge-r" style="background:#f59e0b;color:#000;">VIP</div>` : ``}${m.rating ? `<div class="mrate">⭐ ${m.rating}</div>` : ``}`}</div><div class="mtitle">${m.title}</div><div class="mmeta">${isSeries ? m.country : `${m.year} • ${(m.genre || '').split(',')[0]}`}</div></div>`;
     }
 
     function renderHomeGrids() {
       const list = ITEMS.filter(x => homeGenre === "Barchasi" || (x.genre || "").includes(homeGenre));
-      const trend = [...list].sort((a, b) => b.views - a.views).slice(0, 6);
-      const newest = [...list].sort((a, b) => b.created_at - a.created_at).slice(0, 6);
-      document.getElementById("trendGrid").innerHTML = trend.map(m => cardHTML(m, m.type === "series")).join("");
-      document.getElementById("newGrid").innerHTML = newest.map(m => cardHTML(m, m.type === "series")).join("");
+      document.getElementById("trendGrid").innerHTML = [...list].sort((a, b) => b.views - a.views).slice(0, 6).map(m => cardHTML(m, m.type === "series")).join("");
+      document.getElementById("newGrid").innerHTML = [...list].sort((a, b) => b.created_at - a.created_at).slice(0, 6).map(m => cardHTML(m, m.type === "series")).join("");
     }
 
     function setCatType(t) {
@@ -340,8 +295,7 @@
 
     function renderCatalogPage() {
       const base = ITEMS.filter(x => x.type === catType);
-      const gs = getGenres(base);
-      document.getElementById("catGenres").innerHTML = gs.map(g => {
+      document.getElementById("catGenres").innerHTML = getGenres(base).map(g => {
         const cnt = g === "Barchasi" ? "" : ` ${base.filter(x => (x.genre || "").includes(g)).length}`;
         return `<button class="chip ${catGenre === g ? 'active' : ''}" onclick="catGenre='${g}';renderCatalogPage();">${g}${cnt}</button>`;
       }).join("");
@@ -392,10 +346,7 @@
       document.getElementById("histList").innerHTML = hist.map(h => {
         const it = ITEMS.find(x => x.code === h.code);
         if (!it) return "";
-        return `<div class="hist-item" onclick="openDetail('${it.code}')">
-          <img src="${it.poster}" />
-          <div><div style="font-size:14px;font-weight:700;">${it.title}</div><div style="font-size:12px;color:var(--muted);">${it.type === 'series' ? `${h.ep}-qism • ` : `${it.year} • `}${h.date}</div></div>
-        </div>`;
+        return `<div class="hist-item" onclick="openDetail('${it.code}')"><img src="${it.poster}" /><div><div style="font-size:14px;font-weight:700;">${it.title}</div><div style="font-size:12px;color:var(--muted);">${it.type === 'series' ? `${h.ep}-qism • ` : `${it.year} • `}${h.date}</div></div></div>`;
       }).join("") || `<p style="color:var(--muted);font-size:13px;">Tarix bo‘sh</p>`;
     }
 
@@ -407,7 +358,6 @@
       const curEp = (USTATE.progress || {})[code] || 1;
       const nextEp = Math.min(curEp + (USTATE.progress[code] ? 1 : 0), m.ep_count || 1);
       const similar = ITEMS.filter(x => x.code !== code && x.type === m.type).slice(0, 3);
-
       let epsHTML = "";
       if (m.type === "series") {
         epsHTML = `<div class="sec-head" style="padding:0 16px;"><div class="sec-title">Qismlar</div></div><div class="ep-list">`;
@@ -415,56 +365,12 @@
           const done = i <= curEp && USTATE.progress[code];
           const isNext = i === nextEp;
           const v = (m.ep_views || {})[String(i)] || 0;
-          epsHTML += `
-            <div class="ep-item ${done ? 'done' : ''} ${isNext ? 'next' : ''}" onclick="watchItem('${code}', ${i})">
-              <div style="display:flex;align-items:center;gap:12px;">
-                <div class="ep-num">${done ? '✓' : i}</div>
-                <div><div style="font-size:14px;font-weight:700;">1-mavsum ${i}-qism</div><div style="font-size:11px;color:var(--muted);">${i}-qism • ${v} ko‘rish${isNext ? ' • keyingi' : ''}</div></div>
-              </div>
-              <span>▶</span>
-            </div>`;
+          epsHTML += `<div class="ep-item ${done ? 'done' : ''} ${isNext ? 'next' : ''}" onclick="watchItem('${code}', ${i})"><div style="display:flex;align-items:center;gap:12px;"><div class="ep-num">${done ? '✓' : i}</div><div><div style="font-size:14px;font-weight:700;">1-mavsum ${i}-qism</div><div style="font-size:11px;color:var(--muted);">${i}-qism • ${v} ko‘rish${isNext ? ' • keyingi' : ''}</div></div></div><span>▶</span></div>`;
         }
         epsHTML += `</div>`;
       }
-
       const ov = document.getElementById("detailView");
-      ov.innerHTML = `
-        <div class="det-top"><button class="back-btn" onclick="closeDetail()">← Orqaga</button></div>
-        <div class="det-head">
-          <img class="det-poster" src="${m.poster}" />
-          <div class="det-info">
-            <h2>${m.title}</h2>
-            <div class="det-tags">
-              <span class="dtag">${m.year}</span>
-              <span class="dtag">${m.type === 'series' ? 'Serial' : (m.type === 'cartoon' ? 'Multfilm' : 'Kino')}</span>
-              ${(m.genre || '').split(',').map(g => `<span class="dtag">${g.trim()}</span>`).join("")}
-            </div>
-          </div>
-        </div>
-        <div class="stat3">
-          <div class="sbox"><b>${m.rating ? `⭐ ${m.rating}` : '—'}</b><span>${m.vote_count} ovoz</span></div>
-          <div class="sbox"><b>${m.views}</b><span>ko‘rishlar</span></div>
-          <div class="sbox"><b>${m.type === 'series' ? m.ep_count : `#${m.code}`}</b><span>${m.type === 'series' ? 'qism' : 'kod'}</span></div>
-        </div>
-        <div class="act-row">
-          <button class="btn-watch" onclick="watchItem('${code}', ${m.type === 'series' ? nextEp : 1})">
-            ▶ ${m.type === 'series' ? `Davom ettirish: ${nextEp}-qism` : 'Ko‘rish'}
-          </button>
-          <button class="btn-sq" onclick="toggleFav('${code}')">${isFav ? '❤️' : '🤍'}</button>
-          ${m.type === 'series' ? `<button class="btn-sq" onclick="toggleSub('${code}')">${isSub ? '🔔' : '🔕'}</button>` : ``}
-        </div>
-        <div class="det-box">
-          <div class="kv"><span>Davlat</span><b>${m.country}</b></div>
-          <div class="kv"><span>Til</span><b>O‘zbek tilida</b></div>
-          <div class="kv"><span>Janr</span><b>${m.genre}</b></div>
-        </div>
-        <div class="det-box">
-          <div style="display:flex;justify-content:space-between;font-size:13px;"><b>Sizning bahoingiz</b><span style="color:var(--muted);">${m.rating ? `${m.rating}/5` : 'Baholang'}</span></div>
-          <div class="stars">${[1,2,3,4,5].map(s => `<button class="star-btn" onclick="rateItem('${code}', ${s})">☆</button>`).join("")}</div>
-        </div>
-        ${epsHTML}
-        ${similar.length ? `<div class="sec-head" style="padding:0 16px;"><div class="sec-title">🎬 O‘xshash kinolar</div></div><div class="grid3" style="padding:0 16px;">${similar.map(x => cardHTML(x, x.type === 'series')).join("")}</div>` : ``}
-      `;
+      ov.innerHTML = `<div class="det-top"><button class="back-btn" onclick="closeDetail()">← Orqaga</button></div><div class="det-head"><img class="det-poster" src="${m.poster}" /><div class="det-info"><h2>${m.title}</h2><div class="det-tags"><span class="dtag">${m.year}</span><span class="dtag">${m.type === 'series' ? 'Serial' : (m.type === 'cartoon' ? 'Multfilm' : 'Kino')}</span>${(m.genre || '').split(',').map(g => `<span class="dtag">${g.trim()}</span>`).join("")}</div></div></div><div class="stat3"><div class="sbox"><b>${m.rating ? `⭐ ${m.rating}` : '—'}</b><span>${m.vote_count} ovoz</span></div><div class="sbox"><b>${m.views}</b><span>ko‘rishlar</span></div><div class="sbox"><b>${m.type === 'series' ? m.ep_count : `#${m.code}`}</b><span>${m.type === 'series' ? 'qism' : 'kod'}</span></div></div><div class="act-row"><button class="btn-watch" onclick="watchItem('${code}', ${m.type === 'series' ? nextEp : 1})">▶ ${m.type === 'series' ? `Davom ettirish: ${nextEp}-qism` : 'Ko‘rish'}</button><button class="btn-sq" onclick="toggleFav('${code}')">${isFav ? '❤️' : '🤍'}</button>${m.type === 'series' ? `<button class="btn-sq" onclick="toggleSub('${code}')">${isSub ? '🔔' : '🔕'}</button>` : ``}</div><div class="det-box"><div class="kv"><span>Davlat</span><b>${m.country}</b></div><div class="kv"><span>Til</span><b>O‘zbek tilida</b></div><div class="kv"><span>Janr</span><b>${m.genre}</b></div></div><div class="det-box"><div style="display:flex;justify-content:space-between;font-size:13px;"><b>Sizning bahoingiz</b><span style="color:var(--muted);">${m.rating ? `${m.rating}/5` : 'Baholang'}</span></div><div class="stars">${[1,2,3,4,5].map(s => `<button class="star-btn" onclick="rateItem('${code}', ${s})">☆</button>`).join("")}</div></div>${epsHTML}${similar.length ? `<div class="sec-head" style="padding:0 16px;"><div class="sec-title">🎬 O‘xshash kinolar</div></div><div class="grid3" style="padding:0 16px;">${similar.map(x => cardHTML(x, x.type === 'series')).join("")}</div>` : ``}`;
       ov.classList.add("open");
     }
 
@@ -474,12 +380,8 @@
       if (!USER_ID) { tg.showAlert("Katalogni @Filmorabot_bot ichidan oching!"); return; }
       const res = await fetch(`${SERVER_URL}/api/watch`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ user_id: USER_ID, code, ep }) });
       const data = await res.json();
-      if (data.ok) {
-        toast("✅ Telegram chatga yuborildi");
-        USTATE.progress[code] = ep;
-        renderContinue();
-        setTimeout(() => tg.close(), 900);
-      } else if (data.error === "not_subscribed") { tg.showAlert("Avval kanallarga obuna bo‘ling!"); tg.close(); }
+      if (data.ok) { toast("✅ Telegram chatga yuborildi"); USTATE.progress[code] = ep; renderContinue(); setTimeout(() => tg.close(), 900); }
+      else if (data.error === "not_subscribed") { tg.showAlert("Avval kanallarga obuna bo‘ling!"); tg.close(); }
       else if (data.error === "premium_required") { tg.showAlert("Bu VIP kontent! Botdan VIP oling."); tg.close(); }
     }
 
@@ -496,4 +398,33 @@
     }
 
     async function rateItem(code, score) {
-      const res = await fetch(`${SERVER_URL}/api/rate`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ user_id: USER_ID, code
+      const res = await fetch(`${SERVER_URL}/api/rate`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ user_id: USER_ID, code, score }) });
+      const data = await res.json();
+      if (data.ok) { const m = ITEMS.find(x => x.code === code); if (m) { m.rating = data.rating; m.vote_count = data.vote_count; } toast(`⭐ ${score} baho saqlandi!`); openDetail(code); }
+    }
+
+    function openSearch() { document.getElementById("searchView").classList.add("open"); document.getElementById("searchInp").focus(); renderSearch(); }
+    function closeSearch() { document.getElementById("searchView").classList.remove("open"); }
+    function renderSearch() {
+      const q = document.getElementById("searchInp").value.trim().toLowerCase();
+      const box = document.getElementById("searchRes");
+      if (!q) { box.innerHTML = `<div style="text-align:center;padding:60px 20px;color:var(--muted);"><div style="font-size:40px;margin-bottom:10px;">🔎</div><b>Nimani ko‘ramiz?</b><p style="font-size:13px;margin-top:4px;">Kino, serial nomini yoki kodini yozing</p></div>`; return; }
+      const res = ITEMS.filter(x => x.title.toLowerCase().includes(q) || String(x.code).includes(q));
+      box.innerHTML = `<div class="grid3">${res.map(m => cardHTML(m, m.type === 'series')).join("")}</div>` || `<p style="text-align:center;color:var(--muted);">Topilmadi</p>`;
+    }
+
+    function copyRef() { navigator.clipboard.writeText(USTATE.ref_link); toast("📋 Havola nusxalandi!"); }
+    function shareRef() { tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(USTATE.ref_link)}&text=${encodeURIComponent("🎬 FILMORA PRO — eng sara kino va seriallar!")}`); }
+
+    function switchTab(tab, sortPreset) {
+      document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+      document.querySelectorAll(".nbtn").forEach(b => b.classList.remove("active"));
+      document.getElementById(`page-${tab}`).classList.add("active");
+      document.getElementById(`nav-${tab}`).classList.add("active");
+      if (tab === "catalog" && sortPreset) { document.getElementById("catSort").value = sortPreset; renderCatalogPage(); }
+    }
+
+    init();
+  </script>
+</body>
+</html>
