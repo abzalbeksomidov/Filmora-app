@@ -3,119 +3,497 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Filmora Kinolar</title>
+  <title>FILMORA | PRO</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    :root { --bg: #0b0d12; --card: #151923; --accent: #e50914; --gold: #f59e0b; --text: #f3f4f6; --muted: #9ca3af; --border: rgba(255,255,255,0.08); }
+    :root { --bg: #0c0d10; --card: #16181f; --card2: #1e212b; --red: #e52421; --text: #ffffff; --muted: #8b91a0; --border: rgba(255,255,255,0.08); }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 14px 14px 32px; }
-    header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-    .brand { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
-    .brand span { color: var(--accent); }
-    .search-box { position: relative; margin-bottom: 12px; }
-    .search-box input { width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px 12px 38px; color: var(--text); font-size: 14px; outline: none; }
-    .search-box input:focus { border-color: var(--accent); }
-    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); }
-    .tabs { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; }
-    .tab { background: var(--card); border: 1px solid var(--border); color: var(--muted); padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
-    .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
-    .poster { position: relative; width: 100%; aspect-ratio: 2 / 3; background: #1c2230; }
-    .poster img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .badge { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.78); color: #fff; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; }
-    .prem-badge { position: absolute; top: 8px; right: 8px; background: var(--gold); color: #000; font-size: 10px; font-weight: 800; padding: 3px 7px; border-radius: 6px; }
-    .info { padding: 10px; display: flex; flex-direction: column; flex: 1; justify-content: space-between; gap: 8px; }
-    .title { font-size: 14px; font-weight: 700; line-height: 1.3; }
-    .meta { font-size: 11px; color: var(--muted); }
-    .watch-btn { width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 9px; padding: 9px 10px; font-size: 13px; font-weight: 700; cursor: pointer; }
-    .watch-btn.prem { background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; }
-    .empty { grid-column: 1 / -1; text-align: center; color: var(--muted); padding: 40px 10px; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding-bottom: 78px; overflow-x: hidden; }
+    .topbar { position: sticky; top: 0; z-index: 30; background: rgba(12,13,16,0.92); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+    .logo { display: flex; align-items: center; gap: 9px; font-weight: 900; font-size: 18px; letter-spacing: 0.4px; }
+    .logo-icon { width: 30px; height: 30px; background: var(--red); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+    .logo span { color: var(--red); }
+    .search-trigger { width: 38px; height: 38px; border-radius: 50%; background: var(--card2); border: 1px solid var(--border); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; }
+    .page { display: none; padding: 14px 16px; }
+    .page.active { display: block; }
+    .hero { position: relative; border-radius: 18px; overflow: hidden; height: 215px; background: #191c24; margin-bottom: 14px; border: 1px solid var(--border); }
+    .hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(14px) brightness(0.42); transform: scale(1.15); }
+    .hero-inner { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; height: 100%; padding: 16px; gap: 12px; }
+    .hero-left { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 8px; }
+    .hero-tag { font-size: 11px; font-weight: 800; color: #ff6b4a; letter-spacing: 0.5px; }
+    .hero-title { font-size: 20px; font-weight: 800; line-height: 1.2; }
+    .hero-meta { font-size: 12px; color: #d1d5db; }
+    .hero-btn { align-self: flex-start; background: #fff; color: #000; border: none; border-radius: 10px; padding: 9px 16px; font-size: 13px; font-weight: 800; display: flex; align-items: center; gap: 6px; cursor: pointer; margin-top: 4px; }
+    .hero-poster { width: 115px; height: 172px; border-radius: 12px; object-fit: cover; box-shadow: 0 10px 25px rgba(0,0,0,0.6); flex-shrink: 0; }
+    .dots { display: flex; gap: 6px; justify-content: center; margin-bottom: 14px; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: #374151; transition: 0.2s; }
+    .dot.active { width: 18px; border-radius: 4px; background: var(--red); }
+    .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 16px; scrollbar-width: none; }
+    .chips::-webkit-scrollbar { display: none; }
+    .chip { background: var(--card); border: 1px solid var(--border); color: #e5e7eb; padding: 8px 15px; border-radius: 20px; font-size: 13px; font-weight: 600; white-space: nowrap; cursor: pointer; }
+    .chip.active { background: var(--red); border-color: var(--red); color: #fff; }
+    .sec-head { display: flex; align-items: center; justify-content: space-between; margin: 16px 0 12px; }
+    .sec-title { font-size: 17px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+    .sec-link { font-size: 13px; font-weight: 700; color: var(--red); cursor: pointer; }
+    .cont-row { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; }
+    .cont-row::-webkit-scrollbar { display: none; }
+    .cont-card { min-width: 210px; max-width: 210px; cursor: pointer; }
+    .cont-thumb { position: relative; height: 118px; border-radius: 14px; overflow: hidden; background: var(--card2); margin-bottom: 7px; }
+    .cont-thumb img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.75); }
+    .play-circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.92); color: #000; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+    .cont-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cont-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .mcard { cursor: pointer; }
+    .mposter { position: relative; aspect-ratio: 2/3; border-radius: 12px; overflow: hidden; background: var(--card2); margin-bottom: 6px; }
+    .mposter img { width: 100%; height: 100%; object-fit: cover; }
+    .mrate { position: absolute; bottom: 6px; left: 6px; background: rgba(0,0,0,0.78); font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 6px; display: flex; align-items: center; gap: 3px; }
+    .mbadge-l { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.78); font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 6px; }
+    .mbadge-r { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.78); font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 6px; }
+    .mtitle { font-size: 12.5px; font-weight: 700; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .mmeta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .seg-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+    .seg { display: flex; background: var(--card); padding: 4px; border-radius: 22px; border: 1px solid var(--border); }
+    .seg button { background: transparent; border: none; color: var(--muted); padding: 7px 14px; border-radius: 18px; font-size: 13px; font-weight: 700; cursor: pointer; }
+    .seg button.active { background: var(--red); color: #fff; }
+    .sort-sel { background: var(--card); color: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 8px 12px; font-size: 13px; font-weight: 600; outline: none; }
+    .detail-overlay { position: fixed; inset: 0; z-index: 50; background: var(--bg); overflow-y: auto; display: none; padding-bottom: 30px; }
+    .detail-overlay.open { display: block; }
+    .det-top { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; position: sticky; top: 0; background: rgba(12,13,16,0.9); backdrop-filter: blur(10px); z-index: 5; }
+    .back-btn { background: none; border: none; color: #fff; font-size: 16px; font-weight: 700; cursor: pointer; }
+    .det-head { display: flex; gap: 14px; padding: 6px 16px 14px; }
+    .det-poster { width: 115px; height: 170px; border-radius: 14px; object-fit: cover; flex-shrink: 0; }
+    .det-info h2 { font-size: 20px; font-weight: 800; line-height: 1.25; margin-bottom: 8px; }
+    .det-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .dtag { background: var(--card2); padding: 4px 10px; border-radius: 8px; font-size: 12px; color: #d1d5db; }
+    .stat3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 0 16px 14px; }
+    .sbox { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 10px 6px; text-align: center; }
+    .sbox b { display: block; font-size: 15px; margin-bottom: 2px; }
+    .sbox span { font-size: 11px; color: var(--muted); }
+    .act-row { display: flex; gap: 10px; padding: 0 16px 14px; }
+    .btn-watch { flex: 1; background: var(--red); color: #fff; border: none; border-radius: 12px; padding: 13px; font-size: 15px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-sq { width: 48px; height: 48px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .det-box { margin: 0 16px 14px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; }
+    .kv { display: flex; justify-content: space-between; font-size: 13px; padding: 5px 0; }
+    .kv span:first-child { color: var(--muted); }
+    .stars { display: flex; justify-content: space-between; margin-top: 10px; }
+    .star-btn { width: 44px; height: 38px; background: var(--card2); border: 1px solid var(--border); border-radius: 10px; color: #9ca3af; font-size: 18px; cursor: pointer; }
+    .ep-list { padding: 0 16px; display: flex; flex-direction: column; gap: 8px; }
+    .ep-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+    .ep-item.next { border-color: var(--red); }
+    .ep-num { width: 34px; height: 34px; border-radius: 9px; background: var(--card2); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; }
+    .ep-item.done .ep-num { background: rgba(16,185,129,0.18); color: #10b981; }
+    .ep-item.next .ep-num { background: var(--red); color: #fff; }
+    .search-overlay { position: fixed; inset: 0; z-index: 60; background: var(--bg); display: none; padding: 14px 16px; overflow-y: auto; }
+    .search-overlay.open { display: block; }
+    .sbar { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+    .sbar input { flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 11px 14px; color: #fff; font-size: 14px; outline: none; }
+    .prof-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--red); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; }
+    .vip-box { background: linear-gradient(135deg, #2a1f10, #181410); border: 1px solid rgba(245,158,11,0.35); border-radius: 16px; padding: 14px; margin-bottom: 12px; }
+    .ref-row { display: flex; gap: 8px; margin: 10px 0; }
+    .ref-row input { flex: 1; background: rgba(0,0,0,0.45); border: 1px solid var(--border); border-radius: 10px; padding: 9px 10px; color: #d1d5db; font-size: 12px; }
+    .gold-btn { width: 100%; background: #f59e0b; color: #000; border: none; border-radius: 11px; padding: 11px; font-weight: 800; font-size: 14px; cursor: pointer; }
+    .hist-item { display: flex; align-items: center; gap: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 9px; margin-bottom: 8px; cursor: pointer; }
+    .hist-item img { width: 42px; height: 58px; border-radius: 8px; object-fit: cover; }
+    .toast { position: fixed; bottom: 86px; left: 50%; transform: translateX(-50%); background: #16a34a; color: #fff; padding: 10px 18px; border-radius: 22px; font-size: 13px; font-weight: 700; z-index: 90; display: none; box-shadow: 0 8px 20px rgba(0,0,0,0.5); }
+    .bnav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 40; background: rgba(14,16,20,0.96); backdrop-filter: blur(12px); border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(5, 1fr); padding: 8px 0 10px; }
+    .nbtn { background: none; border: none; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; cursor: pointer; }
+    .nbtn.active { color: var(--red); }
+    .nbtn span:first-child { font-size: 18px; }
   </style>
 </head>
 <body>
-  <header><div class="brand">🎬 FILMORA <span>KINOLAR</span></div></header>
-  <div class="search-box">
-    <span class="search-icon">🔍</span>
-    <input type="text" id="searchInput" placeholder="Kino nomi yoki kodi bo‘yicha qidirish..." oninput="renderCatalog()" />
+  <div class="topbar">
+    <div class="logo"><div class="logo-icon">▶</div>FILMORA <span>PRO</span></div>
+    <button class="search-trigger" onclick="openSearch()">🔍</button>
   </div>
-  <div class="tabs">
-    <button class="tab active" onclick="setFilter('all', this)">Barchasi</button>
-    <button class="tab" onclick="setFilter('free', this)">Bepul kinolar</button>
-    <button class="tab" onclick="setFilter('premium', this)">💎 Premium</button>
+
+  <!-- 1. ASOSIY -->
+  <div class="page active" id="page-home">
+    <div id="heroWrap"></div>
+    <div class="dots" id="heroDots"></div>
+    <div class="chips" id="homeGenres"></div>
+    <div id="continueSec"></div>
+    <div class="sec-head"><div class="sec-title">🔥 Trendda</div><div class="sec-link" onclick="switchTab('catalog', 'popular')">Barchasi</div></div>
+    <div class="grid3" id="trendGrid"></div>
+    <div class="sec-head"><div class="sec-title">🎬 Yangi kinolar</div><div class="sec-link" onclick="switchTab('catalog', 'new')">Barchasi</div></div>
+    <div class="grid3" id="newGrid"></div>
   </div>
-  <div class="grid" id="catalogGrid"><div class="empty">⏳ Katalog yuklanmoqda...</div></div>
+
+  <!-- 2. KATALOG -->
+  <div class="page" id="page-catalog">
+    <h2 style="font-size:22px;margin-bottom:12px;">Kinolar</h2>
+    <div class="seg-row">
+      <div class="seg">
+        <button class="active" id="catMovieBtn" onclick="setCatType('movie')">Kinolar</button>
+        <button id="catCartBtn" onclick="setCatType('cartoon')">Multfilmlar</button>
+      </div>
+      <select class="sort-sel" id="catSort" onchange="renderCatalogPage()">
+        <option value="new">Yangi</option>
+        <option value="popular">Mashhur</option>
+        <option value="rating">Reyting</option>
+        <option value="year">Yil</option>
+      </select>
+    </div>
+    <div class="chips" id="catGenres"></div>
+    <div class="grid3" id="catGrid"></div>
+  </div>
+
+  <!-- 3. SERIALLAR -->
+  <div class="page" id="page-series">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
+      <div>
+        <h2 style="font-size:22px;">Seriallar</h2>
+        <p style="font-size:12px;color:var(--muted);margin-top:4px;">Yangi qismlar haqida xabar olish uchun serialni ❤️ saralang</p>
+      </div>
+      <select class="sort-sel" id="serSort" onchange="renderSeriesPage()">
+        <option value="new">Yangi</option>
+        <option value="popular">Mashhur</option>
+      </select>
+    </div>
+    <div class="grid3" id="serGrid"></div>
+  </div>
+
+  <!-- 4. SARALANGANLAR -->
+  <div class="page" id="page-favs">
+    <h2 style="font-size:22px;margin-bottom:12px;">Saralanganlar</h2>
+    <div class="seg" style="margin-bottom:14px;width:fit-content;">
+      <button class="active" onclick="setFavTab('movie', this)">Kinolar</button>
+      <button onclick="setFavTab('series', this)">Seriallar</button>
+      <button onclick="setFavTab('cartoon', this)">Multfilmlar</button>
+    </div>
+    <div class="grid3" id="favGrid"></div>
+  </div>
+
+  <!-- 5. PROFIL -->
+  <div class="page" id="page-profile">
+    <h2 style="font-size:22px;margin-bottom:12px;">Profil</h2>
+    <div class="prof-card">
+      <div class="avatar" id="profAva">A</div>
+      <div>
+        <div style="font-size:17px;font-weight:800;" id="profName">Foydalanuvchi</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:2px;" id="profStatus">Oddiy a’zo</div>
+      </div>
+    </div>
+    <div class="vip-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <b style="font-size:15px;">VIP’ni bepul oching</b>
+        <span style="background:rgba(245,158,11,0.2);color:#fbbf24;padding:3px 9px;border-radius:10px;font-size:12px;font-weight:800;" id="refCount">0/5</span>
+      </div>
+      <p style="font-size:12px;color:#d1d5db;margin-top:6px;">5 ta do‘stingizni taklif qiling — VIP kino va seriallar ochiladi.</p>
+      <div class="ref-row">
+        <input type="text" id="refInput" readonly />
+        <button class="btn-sq" style="width:40px;height:36px;font-size:14px;" onclick="copyRef()">📋</button>
+      </div>
+      <button class="gold-btn" onclick="shareRef()">📤 Do‘stlarni taklif qilish</button>
+    </div>
+    <div class="stat3" style="padding:0 0 14px;">
+      <div class="sbox"><b id="stMovie">0</b><span>kino</span></div>
+      <div class="sbox"><b id="stSeries">0</b><span>serial</span></div>
+      <div class="sbox"><b id="stCart">0</b><span>multfilm</span></div>
+    </div>
+    <div class="sec-title" style="margin-bottom:10px;">🕒 Ko‘rish tarixi</div>
+    <div id="histList"></div>
+  </div>
+
+  <!-- DETAIL OVERLAY -->
+  <div class="detail-overlay" id="detailView"></div>
+
+  <!-- SEARCH OVERLAY -->
+  <div class="search-overlay" id="searchView">
+    <div class="sbar">
+      <input type="text" id="searchInp" placeholder="🔍 Kino, serial nomi yoki kodi..." oninput="renderSearch()" />
+      <button class="back-btn" style="color:var(--red);" onclick="closeSearch()">Yopish</button>
+    </div>
+    <div id="searchRes"></div>
+  </div>
+
+  <div class="toast" id="toastBox">✅ Telegram chatga yuborildi</div>
+
+  <nav class="bnav">
+    <button class="nbtn active" id="nav-home" onclick="switchTab('home')"><span>🏠</span><span>Asosiy</span></button>
+    <button class="nbtn" id="nav-catalog" onclick="switchTab('catalog')"><span>🎬</span><span>Katalog</span></button>
+    <button class="nbtn" id="nav-series" onclick="switchTab('series')"><span>📺</span><span>Seriallar</span></button>
+    <button class="nbtn" id="nav-favs" onclick="switchTab('favs')"><span>❤️</span><span>Saralangan</span></button>
+    <button class="nbtn" id="nav-profile" onclick="switchTab('profile')"><span>👤</span><span>Profil</span></button>
+  </nav>
+
   <script>
     const tg = window.Telegram.WebApp;
-    tg.expand();
-    tg.ready();
+    tg.expand(); tg.ready();
     const SERVER_URL = "https://filmora-server.onrender.com";
-    let CATALOG = [];
-    let currentFilter = "all";
+    const uObj = tg.initDataUnsafe?.user || {};
+    const USER_ID = uObj.id || 0;
+    const USER_NAME = [uObj.first_name, uObj.last_name].filter(Boolean).join(" ") || "Foydalanuvchi";
 
-    async function loadCatalog() {
+    let ITEMS = [];
+    let USTATE = { name: USER_NAME, is_vip: false, favs: [], subs: [], history: [], progress: {}, refs_count: 0, ref_link: "https://t.me/Filmorabot_bot" };
+    let heroIdx = 0;
+    let homeGenre = "Barchasi";
+    let catType = "movie";
+    let catGenre = "Barchasi";
+    let favType = "movie";
+
+    function toast(msg) {
+      const t = document.getElementById("toastBox");
+      t.innerText = msg; t.style.display = "block";
+      setTimeout(() => t.style.display = "none", 2400);
+    }
+
+    async function init() {
       try {
-        const res = await fetch(`${SERVER_URL}/api/catalog`);
+        const res = await fetch(`${SERVER_URL}/api/state?user_id=${USER_ID}&name=${encodeURIComponent(USER_NAME)}`);
         const data = await res.json();
-        CATALOG = data.items || [];
-      } catch (e) { CATALOG = []; }
-      renderCatalog();
+        ITEMS = data.items || [];
+        if (data.user) USTATE = data.user;
+      } catch (e) {}
+      renderAll();
+      setInterval(() => { if (ITEMS.length > 1) { heroIdx = (heroIdx + 1) % Math.min(ITEMS.length, 6); renderHero(); } }, 4500);
     }
 
-    function setFilter(filter, btn) {
-      currentFilter = filter;
-      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-      btn.classList.add("active");
-      renderCatalog();
+    function renderAll() {
+      renderHero();
+      renderHomeGenres();
+      renderContinue();
+      renderHomeGrids();
+      renderCatalogPage();
+      renderSeriesPage();
+      renderFavsPage();
+      renderProfilePage();
     }
 
-    function renderCatalog() {
-      const q = document.getElementById("searchInput").value.trim().toLowerCase();
-      const grid = document.getElementById("catalogGrid");
-      const filtered = CATALOG.filter(item => {
-        const matchType = currentFilter === "all" || (currentFilter === "premium" && item.premium) || (currentFilter === "free" && !item.premium);
-        const matchQuery = !q || item.title.toLowerCase().includes(q) || String(item.code).includes(q);
-        return matchType && matchQuery;
-      });
-      if (!filtered.length) { grid.innerHTML = `<div class="empty">Kinolar topilmadi 😕</div>`; return; }
-      grid.innerHTML = filtered.map(item => `
-        <div class="card">
-          <div class="poster">
-            <img src="${item.poster}" alt="${item.title}" loading="lazy" />
-            <div class="badge">Kod: ${item.code}</div>
-            ${item.premium ? `<div class="prem-badge">💎 PREMIUM</div>` : ``}
+    function renderHero() {
+      const list = ITEMS.slice(0, 6);
+      const wrap = document.getElementById("heroWrap");
+      const dots = document.getElementById("heroDots");
+      if (!list.length) { wrap.innerHTML = `<div class="hero"><div class="hero-inner"><div><h3>Hozircha kinolar yo‘q</h3></div></div></div>`; return; }
+      const m = list[heroIdx % list.length];
+      wrap.innerHTML = `
+        <div class="hero" onclick="openDetail('${m.code}')">
+          <img class="hero-bg" src="${m.poster}" />
+          <div class="hero-inner">
+            <div class="hero-left">
+              <div class="hero-tag">🔥 YANGI</div>
+              <div class="hero-title">${m.title}</div>
+              <div class="hero-meta">${m.year} • ${m.genre}</div>
+              <button class="hero-btn">▶ Batafsil</button>
+            </div>
+            <img class="hero-poster" src="${m.poster}" />
           </div>
-          <div class="info">
-            <div><div class="title">${item.title}</div><div class="meta">${item.year}</div></div>
-            <button class="watch-btn ${item.premium ? 'prem' : ''}" onclick="requestMovie('${item.code}', this)">
-              ${item.premium ? '💎 Ko‘rish' : '▶ Ko‘rish'}
-            </button>
+        </div>`;
+      dots.innerHTML = list.map((_, i) => `<div class="dot ${i === (heroIdx % list.length) ? 'active' : ''}"></div>`).join("");
+    }
+
+    function getGenres(arr) {
+      const s = new Set(["Barchasi"]);
+      arr.forEach(x => (x.genre || "").split(",").forEach(g => { if (g.trim()) s.add(g.trim()); }));
+      return Array.from(s);
+    }
+
+    function renderHomeGenres() {
+      const gs = getGenres(ITEMS);
+      document.getElementById("homeGenres").innerHTML = gs.map(g => `<button class="chip ${homeGenre === g ? 'active' : ''}" onclick="homeGenre='${g}';renderHomeGenres();renderHomeGrids();">${g}</button>`).join("");
+    }
+
+    function renderContinue() {
+      const sec = document.getElementById("continueSec");
+      const entries = Object.entries(USTATE.progress || {}).map(([c, ep]) => ({ item: ITEMS.find(x => x.code === c), ep })).filter(x => x.item);
+      if (!entries.length) { sec.innerHTML = ""; return; }
+      sec.innerHTML = `
+        <div class="sec-head"><div class="sec-title">▶ Davom ettirish</div></div>
+        <div class="cont-row">${entries.map(({ item, ep }) => `
+          <div class="cont-card" onclick="openDetail('${item.code}')">
+            <div class="cont-thumb"><img src="${item.poster}" /><div class="play-circle">▶</div></div>
+            <div class="cont-name">${item.title}</div>
+            <div class="cont-sub">▶ ${ep}-qism • ${ep}/${item.ep_count}</div>
+          </div>`).join("")}
+        </div>`;
+    }
+
+    function cardHTML(m, isSeries = false) {
+      return `
+        <div class="mcard" onclick="openDetail('${m.code}')">
+          <div class="mposter">
+            <img src="${m.poster}" loading="lazy" />
+            ${isSeries ? `<div class="mbadge-l">Serial</div><div class="mbadge-r">${m.ep_count} qism</div>` : `${m.premium ? `<div class="mbadge-r" style="background:#f59e0b;color:#000;">VIP</div>` : ``}${m.rating ? `<div class="mrate">⭐ ${m.rating}</div>` : ``}`}
+          </div>
+          <div class="mtitle">${m.title}</div>
+          <div class="mmeta">${isSeries ? m.country : `${m.year} • ${(m.genre || '').split(',')[0]}`}</div>
+        </div>`;
+    }
+
+    function renderHomeGrids() {
+      const list = ITEMS.filter(x => homeGenre === "Barchasi" || (x.genre || "").includes(homeGenre));
+      const trend = [...list].sort((a, b) => b.views - a.views).slice(0, 6);
+      const newest = [...list].sort((a, b) => b.created_at - a.created_at).slice(0, 6);
+      document.getElementById("trendGrid").innerHTML = trend.map(m => cardHTML(m, m.type === "series")).join("");
+      document.getElementById("newGrid").innerHTML = newest.map(m => cardHTML(m, m.type === "series")).join("");
+    }
+
+    function setCatType(t) {
+      catType = t; catGenre = "Barchasi";
+      document.getElementById("catMovieBtn").classList.toggle("active", t === "movie");
+      document.getElementById("catCartBtn").classList.toggle("active", t === "cartoon");
+      renderCatalogPage();
+    }
+
+    function renderCatalogPage() {
+      const base = ITEMS.filter(x => x.type === catType);
+      const gs = getGenres(base);
+      document.getElementById("catGenres").innerHTML = gs.map(g => {
+        const cnt = g === "Barchasi" ? "" : ` ${base.filter(x => (x.genre || "").includes(g)).length}`;
+        return `<button class="chip ${catGenre === g ? 'active' : ''}" onclick="catGenre='${g}';renderCatalogPage();">${g}${cnt}</button>`;
+      }).join("");
+      let filtered = base.filter(x => catGenre === "Barchasi" || (x.genre || "").includes(catGenre));
+      const s = document.getElementById("catSort").value;
+      if (s === "popular") filtered.sort((a, b) => b.views - a.views);
+      else if (s === "rating") filtered.sort((a, b) => b.rating - a.rating);
+      else if (s === "year") filtered.sort((a, b) => parseInt(b.year || 0) - parseInt(a.year || 0));
+      else filtered.sort((a, b) => b.created_at - a.created_at);
+      document.getElementById("catGrid").innerHTML = filtered.map(m => cardHTML(m, false)).join("") || `<p style="color:var(--muted);">Topilmadi</p>`;
+    }
+
+    function renderSeriesPage() {
+      let sers = ITEMS.filter(x => x.type === "series");
+      if (document.getElementById("serSort").value === "popular") sers.sort((a, b) => b.views - a.views);
+      else sers.sort((a, b) => b.created_at - a.created_at);
+      document.getElementById("serGrid").innerHTML = sers.map(m => cardHTML(m, true)).join("") || `<p style="color:var(--muted);">Seriallar yo‘q</p>`;
+    }
+
+    function setFavTab(t, btn) {
+      favType = t;
+      btn.parentElement.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      renderFavsPage();
+    }
+
+    function renderFavsPage() {
+      const list = ITEMS.filter(x => (USTATE.favs || []).includes(x.code) && x.type === favType);
+      document.getElementById("favGrid").innerHTML = list.map(m => cardHTML(m, m.type === "series")).join("") || `<p style="color:var(--muted);">Bo‘sh</p>`;
+    }
+
+    function renderProfilePage() {
+      document.getElementById("profAva").innerText = (USTATE.name || "F")[0].toUpperCase();
+      document.getElementById("profName").innerText = USTATE.name;
+      document.getElementById("profStatus").innerText = USTATE.is_vip ? "💎 VIP a’zo" : "Oddiy a’zo";
+      document.getElementById("refCount").innerText = `${USTATE.refs_count || 0}/5`;
+      document.getElementById("refInput").value = USTATE.ref_link;
+      const hist = USTATE.history || [];
+      let mc = 0, sc = 0, cc = 0;
+      hist.forEach(h => {
+        const it = ITEMS.find(x => x.code === h.code);
+        if (!it) return;
+        if (it.type === "series") sc++; else if (it.type === "cartoon") cc++; else mc++;
+      });
+      document.getElementById("stMovie").innerText = mc;
+      document.getElementById("stSeries").innerText = sc;
+      document.getElementById("stCart").innerText = cc;
+      document.getElementById("histList").innerHTML = hist.map(h => {
+        const it = ITEMS.find(x => x.code === h.code);
+        if (!it) return "";
+        return `<div class="hist-item" onclick="openDetail('${it.code}')">
+          <img src="${it.poster}" />
+          <div><div style="font-size:14px;font-weight:700;">${it.title}</div><div style="font-size:12px;color:var(--muted);">${it.type === 'series' ? `${h.ep}-qism • ` : `${it.year} • `}${h.date}</div></div>
+        </div>`;
+      }).join("") || `<p style="color:var(--muted);font-size:13px;">Tarix bo‘sh</p>`;
+    }
+
+    function openDetail(code) {
+      const m = ITEMS.find(x => x.code === code);
+      if (!m) return;
+      const isFav = (USTATE.favs || []).includes(code);
+      const isSub = (USTATE.subs || []).includes(code);
+      const curEp = (USTATE.progress || {})[code] || 1;
+      const nextEp = Math.min(curEp + (USTATE.progress[code] ? 1 : 0), m.ep_count || 1);
+      const similar = ITEMS.filter(x => x.code !== code && x.type === m.type).slice(0, 3);
+
+      let epsHTML = "";
+      if (m.type === "series") {
+        epsHTML = `<div class="sec-head" style="padding:0 16px;"><div class="sec-title">Qismlar</div></div><div class="ep-list">`;
+        for (let i = 1; i <= (m.ep_count || 1); i++) {
+          const done = i <= curEp && USTATE.progress[code];
+          const isNext = i === nextEp;
+          const v = (m.ep_views || {})[String(i)] || 0;
+          epsHTML += `
+            <div class="ep-item ${done ? 'done' : ''} ${isNext ? 'next' : ''}" onclick="watchItem('${code}', ${i})">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div class="ep-num">${done ? '✓' : i}</div>
+                <div><div style="font-size:14px;font-weight:700;">1-mavsum ${i}-qism</div><div style="font-size:11px;color:var(--muted);">${i}-qism • ${v} ko‘rish${isNext ? ' • keyingi' : ''}</div></div>
+              </div>
+              <span>▶</span>
+            </div>`;
+        }
+        epsHTML += `</div>`;
+      }
+
+      const ov = document.getElementById("detailView");
+      ov.innerHTML = `
+        <div class="det-top"><button class="back-btn" onclick="closeDetail()">← Orqaga</button></div>
+        <div class="det-head">
+          <img class="det-poster" src="${m.poster}" />
+          <div class="det-info">
+            <h2>${m.title}</h2>
+            <div class="det-tags">
+              <span class="dtag">${m.year}</span>
+              <span class="dtag">${m.type === 'series' ? 'Serial' : (m.type === 'cartoon' ? 'Multfilm' : 'Kino')}</span>
+              ${(m.genre || '').split(',').map(g => `<span class="dtag">${g.trim()}</span>`).join("")}
+            </div>
           </div>
         </div>
-      `).join("");
+        <div class="stat3">
+          <div class="sbox"><b>${m.rating ? `⭐ ${m.rating}` : '—'}</b><span>${m.vote_count} ovoz</span></div>
+          <div class="sbox"><b>${m.views}</b><span>ko‘rishlar</span></div>
+          <div class="sbox"><b>${m.type === 'series' ? m.ep_count : `#${m.code}`}</b><span>${m.type === 'series' ? 'qism' : 'kod'}</span></div>
+        </div>
+        <div class="act-row">
+          <button class="btn-watch" onclick="watchItem('${code}', ${m.type === 'series' ? nextEp : 1})">
+            ▶ ${m.type === 'series' ? `Davom ettirish: ${nextEp}-qism` : 'Ko‘rish'}
+          </button>
+          <button class="btn-sq" onclick="toggleFav('${code}')">${isFav ? '❤️' : '🤍'}</button>
+          ${m.type === 'series' ? `<button class="btn-sq" onclick="toggleSub('${code}')">${isSub ? '🔔' : '🔕'}</button>` : ``}
+        </div>
+        <div class="det-box">
+          <div class="kv"><span>Davlat</span><b>${m.country}</b></div>
+          <div class="kv"><span>Til</span><b>O‘zbek tilida</b></div>
+          <div class="kv"><span>Janr</span><b>${m.genre}</b></div>
+        </div>
+        <div class="det-box">
+          <div style="display:flex;justify-content:space-between;font-size:13px;"><b>Sizning bahoingiz</b><span style="color:var(--muted);">${m.rating ? `${m.rating}/5` : 'Baholang'}</span></div>
+          <div class="stars">${[1,2,3,4,5].map(s => `<button class="star-btn" onclick="rateItem('${code}', ${s})">☆</button>`).join("")}</div>
+        </div>
+        ${epsHTML}
+        ${similar.length ? `<div class="sec-head" style="padding:0 16px;"><div class="sec-title">🎬 O‘xshash kinolar</div></div><div class="grid3" style="padding:0 16px;">${similar.map(x => cardHTML(x, x.type === 'series')).join("")}</div>` : ``}
+      `;
+      ov.classList.add("open");
     }
 
-    async function requestMovie(code, btn) {
-      const userId = tg.initDataUnsafe?.user?.id;
-      if (!userId) { tg.showAlert("Iltimos, katalogni @Filmorabot_bot ichidan oching!"); return; }
-      const oldText = btn.innerHTML;
-      btn.disabled = true; btn.innerHTML = "⏳ Yuborilmoqda...";
-      try {
-        const res = await fetch(`${SERVER_URL}/api/watch`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user_id: userId, code: String(code) })
-        });
-        const data = await res.json();
-        if (data.ok) tg.close();
-        else if (data.error === "not_subscribed") { tg.showAlert("Avval kanallarga obuna bo‘ling!"); tg.close(); }
-        else if (data.error === "premium_required") { tg.showAlert("Bu Premium kino! Botdagi 💎 Premium bo‘limidan obuna oling."); tg.close(); }
-        else tg.showAlert("Kino topilmadi.");
-      } catch (err) {
-        tg.showAlert("Server uyg‘onmoqda (15-20 soniya). Yana bir marta bosing!");
-      } finally { btn.disabled = false; btn.innerHTML = oldText; }
+    function closeDetail() { document.getElementById("detailView").classList.remove("open"); }
+
+    async function watchItem(code, ep) {
+      if (!USER_ID) { tg.showAlert("Katalogni @Filmorabot_bot ichidan oching!"); return; }
+      const res = await fetch(`${SERVER_URL}/api/watch`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ user_id: USER_ID, code, ep }) });
+      const data = await res.json();
+      if (data.ok) {
+        toast("✅ Telegram chatga yuborildi");
+        USTATE.progress[code] = ep;
+        renderContinue();
+        setTimeout(() => tg.close(), 900);
+      } else if (data.error === "not_subscribed") { tg.showAlert("Avval kanallarga obuna bo‘ling!"); tg.close(); }
+      else if (data.error === "premium_required") { tg.showAlert("Bu VIP kontent! Botdan VIP oling."); tg.close(); }
     }
-    loadCatalog();
-  </script>
-</body>
-</html>
+
+    async function toggleFav(code) {
+      const res = await fetch(`${SERVER_URL}/api/fav`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ user_id: USER_ID, code }) });
+      const data = await res.json();
+      if (data.ok) { USTATE.favs = data.favs; openDetail(code); renderFavsPage(); }
+    }
+
+    async function toggleSub(code) {
+      const res = await fetch(`${SERVER_URL}/api/sub`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ user_id: USER_ID, code }) });
+      const data = await res.json();
+      if (data.ok) { USTATE.subs = data.subs; openDetail(code); toast(data.added ? "🔔 Kuzatish yoqildi" : "🔕 O‘chirildi"); }
+    }
+
+    async function rateItem(code, score) {
+      const res = await fetch(`${SERVER_URL}/api/rate`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ user_id: USER_ID, code
