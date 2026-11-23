@@ -211,16 +211,25 @@
     <button class="nbtn" id="nav-favs" onclick="switchTab('favs')"><span>❤️</span><span>Saralangan</span></button>
     <button class="nbtn" id="nav-profile" onclick="switchTab('profile')"><span>👤</span><span>Profil</span></button>
                           </nav>
-        <script>
+    <script>
     const tg = window.Telegram.WebApp;
     tg.expand(); tg.ready();
     const SERVER_URL = "https://filmora-server.onrender.com";
-    const uObj = tg.initDataUnsafe?.user || {};
+
+    let uObj = tg.initDataUnsafe?.user || {};
+    if (!uObj.id && tg.initData) {
+      try {
+        const p = new URLSearchParams(tg.initData);
+        if (p.get("user")) uObj = JSON.parse(p.get("user"));
+      } catch (e) {}
+    }
     const USER_ID = uObj.id || 0;
     const USER_NAME = [uObj.first_name, uObj.last_name].filter(Boolean).join(" ") || "Foydalanuvchi";
 
-    let ITEMS = [];
-    let USTATE = { name: USER_NAME, is_vip: false, favs: [], subs: [], history: [], progress: {}, refs_count: 0, ref_link: "https://t.me/Filmorabot_bot" };
+    let ITEMS = JSON.parse(localStorage.getItem("filmora_items") || "[]");
+    let USTATE = JSON.parse(localStorage.getItem("filmora_user") || "null") || {
+      name: USER_NAME, is_vip: false, favs: [], subs: [], history: [], progress: {}, refs_count: 0, ref_link: "https://t.me/Filmorabot_bot"
+    };
     let heroIdx = 0;
     let homeGenre = "Barchasi";
     let catType = "movie";
@@ -230,18 +239,30 @@
     function toast(msg) {
       const t = document.getElementById("toastBox");
       t.innerText = msg; t.style.display = "block";
-      setTimeout(() => t.style.display = "none", 2400);
+      setTimeout(() => t.style.display = "none", 2200);
     }
 
     async function init() {
+      if (ITEMS.length) renderAll();
       try {
         const res = await fetch(`${SERVER_URL}/api/state?user_id=${USER_ID}&name=${encodeURIComponent(USER_NAME)}`);
         const data = await res.json();
-        ITEMS = data.items || [];
-        if (data.user) USTATE = data.user;
+        if (data.items) {
+          ITEMS = data.items;
+          localStorage.setItem("filmora_items", JSON.stringify(ITEMS));
+        }
+        if (data.user) {
+          USTATE = data.user;
+          localStorage.setItem("filmora_user", JSON.stringify(USTATE));
+        }
       } catch (e) {}
       renderAll();
-      setInterval(() => { if (ITEMS.length > 1) { heroIdx = (heroIdx + 1) % Math.min(ITEMS.length, 6); renderHero(); } }, 4500);
+      setInterval(() => {
+        if (ITEMS.length > 1) {
+          heroIdx = (heroIdx + 1) % Math.min(ITEMS.length, 6);
+          renderHero();
+        }
+      }, 4500);
     }
 
     function renderAll() {
@@ -376,14 +397,31 @@
 
     function closeDetail() { document.getElementById("detailView").classList.remove("open"); }
 
-    async function watchItem(code, ep) {
+        async function watchItem(code, ep) {
       if (!USER_ID) { tg.showAlert("Katalogni @Filmorabot_bot ichidan oching!"); return; }
-      const res = await fetch(`${SERVER_URL}/api/watch`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ user_id: USER_ID, code, ep }) });
+      toast("⏳ Kino yuborilmoqda...");
+      const res = await fetch(`${SERVER_URL}/api/watch`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: USER_ID, code, ep })
+      });
       const data = await res.json();
-      if (data.ok) { toast("✅ Telegram chatga yuborildi"); USTATE.progress[code] = ep; renderContinue(); setTimeout(() => tg.close(), 900); }
-      else if (data.error === "not_subscribed") { tg.showAlert("Avval kanallarga obuna bo‘ling!"); tg.close(); }
-      else if (data.error === "premium_required") { tg.showAlert("Bu VIP kontent! Botdan VIP oling."); tg.close(); }
-    }
+      if (data.ok) {
+        toast("✅ Telegram chatga yuborildi");
+        USTATE.progress[code] = ep;
+        localStorage.setItem("filmora_user", JSON.stringify(USTATE));
+        renderContinue();
+        setTimeout(() => {
+          tg.openTelegramLink("https://t.me/Filmorabot_bot");
+        }, 500);
+      } else if (data.error === "not_subscribed") {
+        tg.showAlert("Avval kanallarga obuna bo‘ling!");
+        tg.openTelegramLink("https://t.me/Filmorabot_bot");
+      } else if (data.error === "premium_required") {
+        tg.showAlert("Bu VIP kontent! Botdan VIP oling.");
+        tg.openTelegramLink("https://t.me/Filmorabot_bot");
+      }
+      
 
     async function toggleFav(code) {
       const res = await fetch(`${SERVER_URL}/api/fav`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ user_id: USER_ID, code }) });
