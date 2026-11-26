@@ -270,64 +270,80 @@
       renderCatalogPage(); renderSeriesPage(); renderFavsPage(); renderProfilePage();
     }
 
+        function normGenre(g) {
+        g = (g || "").trim().toLowerCase();
+        return g ? g.charAt(0).toUpperCase() + g.slice(1) : "";
+    }
+    function itemGenres(x) {
+        return (x.genre || "").split(",").map(normGenre).filter(Boolean);
+    }
+    function moveHero(step) {
+        const len = Math.min(ITEMS.length, 6);
+        if (!len) return;
+        heroIdx = (heroIdx + step + len) % len;
+        renderHero();
+    }
+    let heroTouchX = 0;
+
     function renderHero() {
-      const list = ITEMS.slice(0, 6);
-      const wrap = document.getElementById("heroWrap");
-      const dots = document.getElementById("heroDots");
-      if (!list.length) { wrap.innerHTML = `<div class="hero"><div class="hero-inner"><div><h3>Hozircha kinolar yo‘q</h3></div></div></div>`; return; }
-      const m = list[heroIdx % list.length];
-      wrap.innerHTML = `<div class="hero" onclick="openDetail('${m.code}')"><img class="hero-bg" src="${m.poster}" /><div class="hero-inner"><div class="hero-left"><div class="hero-tag">🔥 YANGI</div><div class="hero-title">${m.title}</div><div class="hero-meta">${m.year} • ${m.genre}</div><button class="hero-btn">▶ Batafsil</button></div><img class="hero-poster" src="${m.poster}" /></div></div>`;
-      dots.innerHTML = list.map((_, i) => `<div class="dot ${i === (heroIdx % list.length) ? 'active' : ''}"></div>`).join("");
+        const list = [...ITEMS].sort((a, b) => (b.created_at || 0) - (a.created_at || 0)).slice(0, 6);
+        const wrap = document.getElementById("heroWrap");
+        const dots = document.getElementById("heroDots");
+        if (!list.length) { wrap.innerHTML = `<div class="hero"><div class="hero-inner"><h3>Hozircha kinolar yo'q</h3></div></div>`; return; }
+        const m = list[heroIdx % list.length];
+        wrap.innerHTML = `<div class="hero" ontouchstart="heroTouchX=event.touches[0].clientX" ontouchend="let dx=event.changedTouches[0].clientX-heroTouchX;if(Math.abs(dx)>35)moveHero(dx<0?1:-1)" onclick="openDetail('${m.code}')"><img class="hero-bg" src="${m.poster}"><button onclick="event.stopPropagation();moveHero(-1)" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);z-index:5;width:30px;height:30px;border-radius:50%;border:none;background:rgba(0,0,0,.55);color:#fff;font-size:18px;cursor:pointer">‹</button><button onclick="event.stopPropagation();moveHero(1)" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);z-index:5;width:30px;height:30px;border-radius:50%;border:none;background:rgba(0,0,0,.55);color:#fff;font-size:18px;cursor:pointer">›</button><div class="hero-inner"><div class="hero-left"><div class="hero-tag">🔥 YANGI</div><div class="hero-title">${m.title}</div><div class="hero-meta">${m.year} • ${itemGenres(m).join(", ")}</div><button class="hero-btn">▶ Batafsil</button></div><img class="hero-poster" src="${m.poster}"></div></div>`;
+        dots.innerHTML = list.map((_, i) => `<div class="dot ${i === (heroIdx % list.length) ? 'active' : ''}" onclick="heroIdx=${i};renderHero()"></div>`).join("");
     }
 
     function getGenres(arr) {
-      const s = new Set(["Barchasi"]);
-      arr.forEach(x => (x.genre || "").split(",").forEach(g => { if (g.trim()) s.add(g.trim()); }));
-      return Array.from(s);
+        const s = new Set(["Barchasi"]);
+        arr.forEach(x => itemGenres(x).forEach(g => s.add(g)));
+        return Array.from(s);
     }
 
     function renderHomeGenres() {
-      document.getElementById("homeGenres").innerHTML = getGenres(ITEMS).map(g => `<button class="chip ${homeGenre === g ? 'active' : ''}" onclick="homeGenre='${g}';renderHomeGenres();renderHomeGrids();">${g}</button>`).join("");
+        document.getElementById("homeGenres").innerHTML = getGenres(ITEMS).map(g => `<button class="chip ${homeGenre === g ? 'active' : ''}" onclick="homeGenre='${g}';renderHomeGenres();renderHomeGrids();">${g}</button>`).join("");
     }
 
     function renderContinue() {
-      const sec = document.getElementById("continueSec");
-      const entries = Object.entries(USTATE.progress || {}).map(([c, ep]) => ({ item: ITEMS.find(x => x.code === c), ep })).filter(x => x.item);
-      if (!entries.length) { sec.innerHTML = ""; return; }
-      sec.innerHTML = `<div class="sec-head"><div class="sec-title">▶ Davom ettirish</div></div><div class="cont-row">${entries.map(({ item, ep }) => `<div class="cont-card" onclick="openDetail('${item.code}')"><div class="cont-thumb"><img src="${item.poster}" /><div class="play-circle">▶</div></div><div class="cont-name">${item.title}</div><div class="cont-sub">▶ ${ep}-qism • ${ep}/${item.ep_count}</div></div>`).join("")}</div>`;
+        const sec = document.getElementById("continueSec");
+        const entries = Object.entries(USTATE.progress || {}).map(([c, ep]) => ({ item: ITEMS.find(x => x.code === c), ep })).filter(x => x.item);
+        if (!entries.length) { sec.innerHTML = ""; return; }
+        sec.innerHTML = `<div class="sec-head"><div class="sec-title">▶ Davom ettirish</div></div><div class="cont-row">${entries.map(({ item, ep }) => `<div class="cont-card" onclick="openDetail('${item.code}')"><div class="cont-thumb"><img src="${item.poster}" /><div class="play-circle">▶</div></div><div class="cont-name">${item.title}</div><div class="cont-sub">▶ ${ep}-qism • ${ep}/${item.ep_count || 1}</div></div>`).join("")}</div>`;
     }
 
     function cardHTML(m, isSeries = false) {
-      return `<div class="mcard" onclick="openDetail('${m.code}')"><div class="mposter"><img src="${m.poster}" loading="lazy" />${isSeries ? `<div class="mbadge-l">Serial</div><div class="mbadge-r">${m.ep_count} qism</div>` : `${m.premium ? `<div class="mbadge-r" style="background:#f59e0b;color:#000;">VIP</div>` : ``}${m.rating ? `<div class="mrate">⭐ ${m.rating}</div>` : ``}`}</div><div class="mtitle">${m.title}</div><div class="mmeta">${isSeries ? m.country : `${m.year} • ${(m.genre || '').split(',')[0]}`}</div></div>`;
+        return `<div class="mcard" onclick="openDetail('${m.code}')"><div class="mposter"><img src="${m.poster}" loading="lazy"/>${isSeries ? `<div class="mbadge-r">${m.ep_count} qism</div>` : `${m.premium ? `<div class="mbadge-r" style="background:#f59e0b;color:#000">VIP</div>` : ''}`}${m.rating ? `<div class="mrate">⭐ ${m.rating}</div>` : ''}</div><div class="mtitle">${m.title}</div><div class="mmeta">${isSeries ? m.country : m.year} • ${itemGenres(m)[0] || ""}</div></div>`;
     }
 
     function renderHomeGrids() {
-      const list = ITEMS.filter(x => homeGenre === "Barchasi" || (x.genre || "").includes(homeGenre));
-      document.getElementById("trendGrid").innerHTML = [...list].sort((a, b) => b.views - a.views).slice(0, 6).map(m => cardHTML(m, m.type === "series")).join("");
-      document.getElementById("newGrid").innerHTML = [...list].sort((a, b) => b.created_at - a.created_at).slice(0, 6).map(m => cardHTML(m, m.type === "series")).join("");
+        const list = ITEMS.filter(x => homeGenre === "Barchasi" || itemGenres(x).includes(homeGenre));
+        document.getElementById("trendGrid").innerHTML = [...list].sort((a, b) => b.views - a.views).slice(0, 6).map(m => cardHTML(m, m.type === "series")).join("");
+        document.getElementById("newGrid").innerHTML = [...list].sort((a, b) => b.created_at - a.created_at).slice(0, 6).map(m => cardHTML(m, m.type === "series")).join("");
     }
 
     function setCatType(t) {
-      catType = t; catGenre = "Barchasi";
-      document.getElementById("catMovieBtn").classList.toggle("active", t === "movie");
-      document.getElementById("catCartBtn").classList.toggle("active", t === "cartoon");
-      renderCatalogPage();
+        catType = t; catGenre = "Barchasi";
+        document.getElementById("catMovieBtn").classList.toggle("active", t === "movie");
+        document.getElementById("catCartBtn").classList.toggle("active", t === "cartoon");
+        renderCatalogPage();
     }
 
     function renderCatalogPage() {
-      const base = ITEMS.filter(x => x.type === catType);
-      document.getElementById("catGenres").innerHTML = getGenres(base).map(g => {
-        const cnt = g === "Barchasi" ? "" : ` ${base.filter(x => (x.genre || "").includes(g)).length}`;
-        return `<button class="chip ${catGenre === g ? 'active' : ''}" onclick="catGenre='${g}';renderCatalogPage();">${g}${cnt}</button>`;
-      }).join("");
-      let filtered = base.filter(x => catGenre === "Barchasi" || (x.genre || "").includes(catGenre));
-      const s = document.getElementById("catSort").value;
-      if (s === "popular") filtered.sort((a, b) => b.views - a.views);
-      else if (s === "rating") filtered.sort((a, b) => b.rating - a.rating);
-      else if (s === "year") filtered.sort((a, b) => parseInt(b.year || 0) - parseInt(a.year || 0));
-      else filtered.sort((a, b) => b.created_at - a.created_at);
-      document.getElementById("catGrid").innerHTML = filtered.map(m => cardHTML(m, false)).join("") || `<p style="color:var(--muted);">Topilmadi</p>`;
-    }
+        const base = ITEMS.filter(x => x.type === catType);
+        document.getElementById("catGenres").innerHTML = getGenres(base).map(g => {
+            const cnt = g === "Barchasi" ? "" : ` ${base.filter(x => itemGenres(x).includes(g)).length}`;
+            return `<button class="chip ${catGenre === g ? 'active' : ''}" onclick="catGenre='${g}';renderCatalogPage();">${g}${cnt}</button>`;
+        }).join("");
+        let filtered = base.filter(x => catGenre === "Barchasi" || itemGenres(x).includes(catGenre));
+        const s = document.getElementById("catSort").value;
+        if (s === "popular") filtered.sort((a, b) => b.views - a.views);
+        else if (s === "rating") filtered.sort((a, b) => b.rating - a.rating);
+        else if (s === "year") filtered.sort((a, b) => parseInt(b.year || 0) - parseInt(a.year || 0));
+        else filtered.sort((a, b) => b.created_at - a.created_at);
+        document.getElementById("catGrid").innerHTML = filtered.map(m => cardHTML(m, false)).join("") || `<p style="color:var(--muted)">Topilmadi</p>`;
+        }
+                                                                      
 
     function renderSeriesPage() {
       let sers = ITEMS.filter(x => x.type === "series");
