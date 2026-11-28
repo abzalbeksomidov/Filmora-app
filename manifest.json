@@ -1,0 +1,24 @@
+{
+  "name": "Filmora TV",
+  "short_name": "Filmora TV",
+  "description": "O'zbek tilidagi filmlar va seriallar katalogi",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0F0F0F",
+  "theme_color": "#0F0F0F",
+  "icons": [
+    {
+      "src": "./file_0000000046548210a92d59d64fff5cd2.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./file_0000000046548210a92d59d64fff5cd2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
